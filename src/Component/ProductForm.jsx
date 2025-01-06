@@ -16,6 +16,7 @@ const ProductForm = () => {
     price: "",
     discount: "",
     tax: "",
+    image: null, // State to hold uploaded image
   });
 
   const sizes = ["S", "M", "L", "XL", "XXL"];
@@ -44,6 +45,13 @@ const ProductForm = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, image: URL.createObjectURL(file) });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData); // Replace with actual form submission logic
@@ -54,66 +62,81 @@ const ProductForm = () => {
       <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-semibold mb-6">Add Product</h2>
 
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left Section: Product Image */}
           <div className="col-span-1">
             <div className="border border-gray-300 rounded-lg p-4">
-              <img
-                src="/tshirt.jpg"
-                alt="Shirt"
-                className="w-full h-auto rounded-md"
+              {/* Display the uploaded image */}
+              {formData.image ? (
+                <img
+                  src={formData.image}
+                  alt="Product"
+                  className="w-full h-auto rounded-md"
+                />
+              ) : (
+                <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-md">
+                  <span className="text-gray-500">No Image Selected</span>
+                </div>
+              )}
+            </div>
+
+            {/* Image Upload Input */}
+            <div className="mt-6">
+              <label className="block text-gray-700 font-medium">Upload Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
               />
-              <p className="text-lg font-medium mt-4">Men's Black Slim Fit T-Shirt</p>
-              <div className="mt-2">
-                <span className="text-green-500 font-bold">50% OFF</span>{" "}
-                <span className="text-gray-700 line-through">$50.00</span>{" "}
-                <span className="text-gray-900 font-semibold">$25.00</span>
+            </div>
+
+            {/* Size Selection */}
+            <div className="mt-6">
+              <label className="block text-gray-700 font-medium">Size</label>
+              <div className="flex flex-wrap space-x-4 mt-2">
+                {sizes.map((size) => (
+                  <button
+                    type="button"
+                    key={size}
+                    onClick={() => handleSizeChange(size)}
+                    className={`px-4 py-2 border rounded-lg mb-2 ${
+                      formData.size.includes(size)
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
               </div>
             </div>
+
+            {/* Color Selection */}
             <div className="mt-6">
-                <label className="block text-gray-700 font-medium">Size</label>
-                <div className="flex space-x-4 mt-2">
-                  {sizes.map((size) => (
-                    <button
-                      type="button"
-                      key={size}
-                      onClick={() => handleSizeChange(size)}
-                      className={`px-4 py-2 border rounded-lg ${
-                        formData.size.includes(size)
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-gray-700"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+              <label className="block text-gray-700 font-medium">Colors</label>
+              <div className="flex space-x-2 mt-2">
+                {colorOptions.map((color) => (
+                  <div
+                    key={color}
+                    className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
+                      formData.colors.includes(color)
+                        ? `border-${color}-500`
+                        : "border-gray-300"
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorChange(color)}
+                  ></div>
+                ))}
               </div>
-              <div className="mt-6">
-                <label className="block text-gray-700 font-medium">Colors</label>
-                <div className="flex space-x-2 mt-2">
-                  {colorOptions.map((color) => (
-                    <div
-                      key={color}
-                      className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
-                        formData.colors.includes(color)
-                          ? `border-${color}-500`
-                          : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => handleColorChange(color)}
-                    ></div>
-                  ))}
-                </div>
-              </div>
+            </div>
           </div>
-          
 
           {/* Right Section: Form Fields */}
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <form onSubmit={handleSubmit}>
               {/* Product Information */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-gray-700 font-medium">Product Name</label>
                   <input
@@ -180,46 +203,6 @@ const ProductForm = () => {
                 </div>
               </div>
 
-              {/* Size Selection */}
-              <div className="mt-6">
-                <label className="block text-gray-700 font-medium">Size</label>
-                <div className="flex space-x-4 mt-2">
-                  {sizes.map((size) => (
-                    <button
-                      type="button"
-                      key={size}
-                      onClick={() => handleSizeChange(size)}
-                      className={`px-4 py-2 border rounded-lg ${
-                        formData.size.includes(size)
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-gray-700"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Color Selection */}
-              <div className="mt-6">
-                <label className="block text-gray-700 font-medium">Colors</label>
-                <div className="flex space-x-2 mt-2">
-                  {colorOptions.map((color) => (
-                    <div
-                      key={color}
-                      className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
-                        formData.colors.includes(color)
-                          ? `border-${color}-500`
-                          : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => handleColorChange(color)}
-                    ></div>
-                  ))}
-                </div>
-              </div>
-
               {/* Description */}
               <div className="mt-6">
                 <label className="block text-gray-700 font-medium">Description</label>
@@ -234,7 +217,7 @@ const ProductForm = () => {
               </div>
 
               {/* Additional Details */}
-              <div className="grid grid-cols-3 gap-6 mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
                   <label className="block text-gray-700 font-medium">Tag Number</label>
                   <input
@@ -273,7 +256,7 @@ const ProductForm = () => {
               </div>
 
               {/* Pricing Details */}
-              <div className="grid grid-cols-3 gap-6 mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
                   <label className="block text-gray-700 font-medium">Price</label>
                   <input
